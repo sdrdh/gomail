@@ -54,11 +54,7 @@ func send(s Sender, m *Message) error {
 		return err
 	}
 
-	if err := s.Send(from, to, m); err != nil {
-		return err
-	}
-
-	return nil
+	return s.Send(from, to, m)
 }
 
 func (m *Message) getFrom() (string, error) {

@@ -311,9 +311,34 @@ func (m *Message) appendFile(list []*file, name string, settings []FileSetting) 
 	return append(list, f)
 }
 
+func (m *Message) appendReader(list []*file, name string, r io.Reader, settings []FileSetting) []*file {
+	f := &file{
+		Name:   name,
+		Header: make(map[string][]string),
+		CopyFunc: func(w io.Writer) error {
+			if _, err := io.Copy(w, r); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+	for _, s := range settings {
+		s(f)
+	}
+	if list == nil {
+		return []*file{f}
+	}
+	return append(list, f)
+}
+
 // Attach attaches the files to the email.
 func (m *Message) Attach(filename string, settings ...FileSetting) {
 	m.attachments = m.appendFile(m.attachments, filename, settings)
+}
+
+// AttachReader attaches the Reader to the email with the name
+func (m *Message) AttachReader(name string, r io.Reader, settings ...FileSetting) {
+	m.attachments = m.appendReader(m.attachments, name, r, settings)
 }
 
 // Embed embeds the images to the email.
