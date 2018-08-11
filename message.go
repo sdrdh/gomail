@@ -283,7 +283,7 @@ func SetCopyFunc(f func(io.Writer) error) FileSetting {
 	}
 }
 
-func (m *Message) appendFile(list []*file, name string, settings []FileSetting) []*file {
+func appendFile(list []*file, name string, settings []FileSetting) []*file {
 	f := &file{
 		Name:   filepath.Base(name),
 		Header: make(map[string][]string),
@@ -311,7 +311,7 @@ func (m *Message) appendFile(list []*file, name string, settings []FileSetting) 
 	return append(list, f)
 }
 
-func (m *Message) appendReader(list []*file, name string, r io.Reader, settings []FileSetting) []*file {
+func appendReader(list []*file, name string, r io.Reader, settings []FileSetting) []*file {
 	f := &file{
 		Name:   name,
 		Header: make(map[string][]string),
@@ -333,15 +333,15 @@ func (m *Message) appendReader(list []*file, name string, r io.Reader, settings 
 
 // Attach attaches the files to the email.
 func (m *Message) Attach(filename string, settings ...FileSetting) {
-	m.attachments = m.appendFile(m.attachments, filename, settings)
+	m.attachments = appendFile(m.attachments, filename, settings)
 }
 
 // AttachReader attaches the Reader to the email with the name
 func (m *Message) AttachReader(name string, r io.Reader, settings ...FileSetting) {
-	m.attachments = m.appendReader(m.attachments, name, r, settings)
+	m.attachments = appendReader(m.attachments, name, r, settings)
 }
 
 // Embed embeds the images to the email.
 func (m *Message) Embed(filename string, settings ...FileSetting) {
-	m.embedded = m.appendFile(m.embedded, filename, settings)
+	m.embedded = appendFile(m.embedded, filename, settings)
 }
